@@ -1,0 +1,25 @@
+FROM monogramm/docker-mautic-base:2.15.1-apache
+
+LABEL maintainer="Mathieu BRUNOT <mathieu.brunot at monogramm dot io>"
+
+# Add requirements for common extenions
+RUN set -ex; \
+    apt-get update; \
+	apt-get install -y --no-install-recommends \
+		libldap2-dev \
+	; \
+	\
+	debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
+	docker-php-ext-configure ldap --with-libdir="lib/$debMultiarch"; \
+	docker-php-ext-install \
+		ldap \
+	; \
+    \
+    composer require monogramm/mautic-ldapauth-bundle \
+        --prefer-dist --prefer-stable --no-update \
+        --no-interaction --optimize-autoloader; \
+    composer install \
+        --prefer-dist --no-dev \
+        --no-interaction --optimize-autoloader; \
+    \
+    chown www-data:www-data plugins/* vendor/*

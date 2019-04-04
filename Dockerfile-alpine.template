@@ -2,6 +2,9 @@ FROM monogramm/docker-mautic-base:%%VERSION%%%%VARIANT%%
 
 LABEL maintainer="Mathieu BRUNOT <mathieu.brunot at monogramm dot io>"
 
+# Overwrite config init script
+COPY makeconfig.php /
+
 # Add requirements for common extenions (untested so far)
 RUN set -ex; \
 	apk add --no-cache --virtual .build-deps \

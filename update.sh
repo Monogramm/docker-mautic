@@ -60,6 +60,12 @@ for latest in "${latests[@]}"; do
 				s/%%VERSION%%/'"$latest"'/g;
 			' "$dir/Dockerfile"
 
+			# Copy the init scripts
+			for name in makeconfig.php; do
+				cp "$name" "$dir/$name"
+				chmod 755 "$dir/$name"
+			done
+
 			travisEnv='\n    - VERSION='"$version"' VARIANT='"$variant$travisEnv"
 
 			if [[ $1 == 'build' ]]; then

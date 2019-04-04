@@ -2,6 +2,9 @@ FROM monogramm/docker-mautic-base:2.15.1-apache
 
 LABEL maintainer="Mathieu BRUNOT <mathieu.brunot at monogramm dot io>"
 
+# Overwrite config init script
+COPY makeconfig.php /
+
 # Add requirements for common extenions
 RUN set -ex; \
     apt-get update; \

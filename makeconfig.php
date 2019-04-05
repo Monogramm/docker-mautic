@@ -36,6 +36,31 @@ if(array_key_exists('MAUTIC_TRUSTED_PROXIES', $_ENV)) {
     $parameters['trusted_proxies'] = $proxies;
 }
 
+if(array_key_exists('MAUTIC_SITE_URL', $_ENV)) {
+    $parameters['site_url'] = $_ENV['MAUTIC_SITE_URL'];
+}
+if(array_key_exists('MAUTIC_LOCALE', $_ENV)) {
+    $parameters['locale'] = $_ENV['MAUTIC_LOCALE'];
+}
+
+if(array_key_exists('MAUTIC_REMEMBERME_DOMAIN', $_ENV)) {
+    $parameters['rememberme_domain'] = $_ENV['MAUTIC_REMEMBERME_DOMAIN'];
+}
+
+if(array_key_exists('MAUTIC_COOKIE_DOMAIN', $_ENV)) {
+    $parameters['cookie_domain'] = $_ENV['MAUTIC_COOKIE_DOMAIN'];
+}
+if(array_key_exists('MAUTIC_COOKIE_SECURE', $_ENV)) {
+    $parameters['cookie_secure'] = (bool) $_ENV['MAUTIC_COOKIE_SECURE'];
+}
+if(array_key_exists('MAUTIC_COOKIE_HTTP_ONLY', $_ENV)) {
+    $parameters['cookie_httponly'] = (bool) $_ENV['MAUTIC_COOKIE_HTTP_ONLY'];
+}
+
+if(array_key_exists('MAUTIC_RSS_NOTIFICATION_URL', $_ENV)) {
+    $parameters['rss_notification_url'] = $_ENV['MAUTIC_RSS_NOTIFICATION_URL'];
+}
+
 if(array_key_exists('PHP_INI_DATE_TIMEZONE', $_ENV)) {
     $parameters['default_timezone'] = $_ENV['PHP_INI_DATE_TIMEZONE'];
 }

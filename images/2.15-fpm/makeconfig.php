@@ -31,11 +31,20 @@ if(array_key_exists('MAUTIC_DB_USER', $_ENV)) {
 if(array_key_exists('MAUTIC_DB_PASSWORD', $_ENV)) {
     $parameters['db_password'] = $_ENV['MAUTIC_DB_PASSWORD'];
 }
+if(array_key_exists('MAUTIC_DB_BACKUP_TABLE', $_ENV)) {
+    $parameters['db_backup_tables'] = (bool) $_ENV['MAUTIC_DB_BACKUP_TABLE'];
+}
+if(array_key_exists('MAUTIC_DB_BACKUP_PREFIX', $_ENV)) {
+    $parameters['db_backup_prefix'] = $_ENV['MAUTIC_DB_BACKUP_PREFIX'];
+}
 if(array_key_exists('MAUTIC_TRUSTED_PROXIES', $_ENV)) {
     $proxies = explode(',', $_ENV['MAUTIC_TRUSTED_PROXIES']);
     $parameters['trusted_proxies'] = $proxies;
 }
 
+if(array_key_exists('MAUTIC_SECRET_KEY', $_ENV)) {
+    $parameters['secret_key'] = $_ENV['MAUTIC_SECRET_KEY'];
+}
 if(array_key_exists('MAUTIC_SITE_URL', $_ENV)) {
     $parameters['site_url'] = $_ENV['MAUTIC_SITE_URL'];
 }

@@ -11,8 +11,8 @@ branches:
 
 before_script:
   - env | sort
-  - name="roundcube"
-  - image="monogramm/docker-roundcube:${VERSION}${VARIANT:+-$VARIANT}"
+  - name="mautic"
+  - image="monogramm/docker-mautic:${VERSION}${VARIANT:+-$VARIANT}"
   - dir="images/${VERSION}${VARIANT:+-$VARIANT}"
 
 script:

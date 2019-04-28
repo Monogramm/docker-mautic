@@ -22,7 +22,7 @@ script:
   - docker run --name "$name" -d -p 8080:80 -e MAUTIC_DB_HOST=percona:3306 -e MAUTIC_DB_USER=root -e MAUTIC_DB_NAME=mautic -e MAUTIC_DB_PASSWORD=mypassword -v /srv/mautic/html:/var/www/html "$image"
 
 after_script:
-  - ls ./
+  - ls /srv/mautic/html/plugins
   - docker ps
   - docker logs "$name"
 

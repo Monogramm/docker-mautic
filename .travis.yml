@@ -22,8 +22,9 @@ script:
   - docker run --name "$name" -d -p 8080:80 -e MAUTIC_DB_HOST=percona:3306 -e MAUTIC_DB_USER=root -e MAUTIC_DB_NAME=mautic -e MAUTIC_DB_PASSWORD=mypassword -v /srv/mautic/html:/var/www/html "$image"
 
 after_script:
+  - sleep 300
   - docker ps
-  - travis_wait docker logs "$name" | grep 'Mautic has been successfully copied'
+  - docker logs "$name" | grep 'Mautic has been successfully copied'
   - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
   - ls /srv/mautic/html/plugins
   - ls /srv/mautic/html/plugins/MauticLdapauthBundle

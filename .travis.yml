@@ -24,6 +24,7 @@ script:
 after_script:
   - docker ps
   - travis_wait docker logs "$name" | grep 'Mautic has been successfully copied'
+  - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
   - ls /srv/mautic/html/plugins
   - ls /srv/mautic/html/plugins/MauticLdapauthBundle
 

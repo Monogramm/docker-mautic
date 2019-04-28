@@ -24,6 +24,7 @@ RUN set -ex; \
     composer install \
         --prefer-dist --no-dev \
         --no-interaction --optimize-autoloader; \
+    rm -rf app/cache/*; \
     composer require monogramm/mautic-ldapauth-bundle \
         --prefer-dist --prefer-stable --no-update \
         --no-interaction --optimize-autoloader; \

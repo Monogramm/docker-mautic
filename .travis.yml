@@ -22,10 +22,10 @@ script:
   - docker run --name "$name" -d -p 8080:80 -e MAUTIC_DB_HOST=percona:3306 -e MAUTIC_DB_USER=root -e MAUTIC_DB_NAME=mautic -e MAUTIC_DB_PASSWORD=mypassword -v /srv/mautic/html:/var/www/html "$image"
 
 after_script:
+  - sleep 600
   - docker ps
-  - sleep 300
   - docker logs "$name"
-  - ls /srv/mautic/html/
+  - ls /srv/mautic/html/plugins
 
 notifications:
   email: false

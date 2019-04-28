@@ -28,5 +28,10 @@ RUN set -ex; \
     composer require monogramm/mautic-ldapauth-bundle \
         --prefer-dist --prefer-stable --no-update \
         --no-interaction --optimize-autoloader; \
+    composer install \
+        --prefer-dist --no-dev \
+        --no-interaction --optimize-autoloader; \
+    ls -al plugins;
+    ls -al vendor;
     \
     chown www-data:www-data plugins/* vendor/*

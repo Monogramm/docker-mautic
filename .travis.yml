@@ -23,7 +23,7 @@ script:
 
 after_script:
   - docker ps
-  - wait 120
+  - wait 600
   - docker logs "$name"
   - ls /srv/mautic/html/
 

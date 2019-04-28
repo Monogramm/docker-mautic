@@ -42,12 +42,6 @@ if (array_key_exists('MAUTIC_TRUSTED_PROXIES', $_ENV)) {
     $parameters['trusted_proxies'] = $proxies;
 }
 
-if (array_key_exists('MAUTIC_SECRET_KEY', $_ENV)) {
-    $parameters['secret_key'] = $_ENV['MAUTIC_SECRET_KEY'];
-}
-if (array_key_exists('MAUTIC_SITE_URL', $_ENV)) {
-    $parameters['site_url'] = $_ENV['MAUTIC_SITE_URL'];
-}
 if (array_key_exists('MAUTIC_LOCALE', $_ENV)) {
     $parameters['locale'] = $_ENV['MAUTIC_LOCALE'];
 }

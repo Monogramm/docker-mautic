@@ -31,7 +31,7 @@ RUN set -ex; \
     composer install \
         --prefer-dist --no-dev \
         --no-interaction --optimize-autoloader; \
-    ls -al plugins;
-    ls -al vendor;
+    ls -al plugins; \
+    ls -al vendor; \
     \
     chown www-data:www-data plugins/* vendor/*

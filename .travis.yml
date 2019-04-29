@@ -20,11 +20,12 @@ script:
   - docker images
   - docker run --name percona -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=mypassword -v mysql_data:/var/lib/mysql percona/percona-server:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
   - docker run --name "$name" -d -p 8080:80 -e MAUTIC_DB_HOST=percona:3306 -e MAUTIC_DB_USER=root -e MAUTIC_DB_NAME=mautic -e MAUTIC_DB_PASSWORD=mypassword -e MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle -v /srv/mautic/html:/var/www/html "$image"
+  - sleep 300
+  - docker logs "$name"
+  - docker ps "$name"
 
 after_script:
-  - sleep 300
   - docker ps
-  - docker logs "$name" | grep 'Mautic has been successfully copied'
   - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
   - ls /srv/mautic/html/plugins
   - ls /srv/mautic/html/plugins/MauticLdapauthBundle

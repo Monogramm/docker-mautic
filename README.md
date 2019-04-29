@@ -29,6 +29,8 @@ https://hub.docker.com/r/monogramm/docker-mautic/
 -	`2.15.1-fpm`, `2.15-fpm`, `production-fpm` (*images/2.15.1-fpm/Dockerfile*)
 -	`2.15.1-alpine`, `2.15-alpine`, `production-alpine` (*images/2.15.1-alpine/Dockerfile*)
 
+:construction: **This image is still in development!**
+
 ## How to run this image ?
 
 See Mautic base image documentation for details.

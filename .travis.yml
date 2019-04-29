@@ -11,18 +11,22 @@ branches:
 
 before_script:
   - env | sort
-  - name="mautic"
-  - image="monogramm/docker-mautic:${VERSION}${VARIANT:+-$VARIANT}"
   - dir="images/${VERSION}${VARIANT:+-$VARIANT}"
 
 script:
-  - travis_retry docker build -t "$image" "$dir"
+  - cd "$dir"
+  - docker-compose build
+  - docker images
+  - travis_retry docker-compose up -d && sleep 300
+  - docker-compose ps
+  - docker-compose logs
+  - docker-compose ps "mauticdb" | grep "Up"
+  - docker-compose ps "mautic" | grep "Up"
+  - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
+  - ls /srv/mautic/html/plugins
 
 after_script:
-  - docker images
-  - docker run --name "$name" -d "$image" "$dir"
-  - docker ps
-  - docker logs "$name"
+  - ls /srv/mautic/html/plugins/MauticLdapauthBundle
 
 notifications:
   email: false

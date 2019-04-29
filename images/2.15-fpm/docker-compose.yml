@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+  mautic:
+    #image: mautic/mautic
+    build: ./
+    container_name: mautic
+    depends_on:
+      - mauticdb
+    links:
+      - mauticdb
+    ports:
+      - 9000:9000
+    volumes:
+      - /srv/mautic/html:/var/www/html
+    environment:
+      - MAUTIC_DB_HOST=mauticdb
+      - MAUTIC_DB_USER=mautic
+      - MAUTIC_DB_PASSWORD=mauticdbpass
+      - MAUTIC_RUN_CRON_JOBS=false
+      - MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
+      - MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle
+
+  mauticdb:
+    image: mariadb:10.3
+    container_name: mauticdb
+    ports:
+      - 3306:3306
+    volumes:
+      - /srv/mautic/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysqlrootpassword
+      - MYSQL_DATABASE=mautic
+      - MYSQL_USER=mautic
+      - MYSQL_PASSWORD=mauticdbpass

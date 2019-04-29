@@ -18,8 +18,8 @@ before_script:
 script:
   - travis_retry docker build -t "$image" "$dir"
   - docker images
-  - docker run --name percona -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=mypassword -v mysql_data:/var/lib/mysql percona/percona-server:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
-  - docker run --name "$name" -d -p 8080:80 -e MAUTIC_DB_HOST=percona:3306 -e MAUTIC_DB_USER=root -e MAUTIC_DB_NAME=mautic -e MAUTIC_DB_PASSWORD=mypassword -e MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle -v /srv/mautic/html:/var/www/html "$image"
+  - docker run --name "$namedb" -d -p 3306:3306 -v /srv/mautic/db:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypassword -e MYSQL_DATABASE=mautic mariadb:10.3 --character_set_client=utf8 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --character-set-client-handshake=FALSE
+  - docker run --name "$name" -d -p 8080:80 -v /srv/mautic/html:/var/www/html -e MAUTIC_DB_HOST=mauticdb -e MAUTIC_DB_USER=root -e MAUTIC_DB_PASSWORD=mypassword -e MAUTIC_DB_NAME=mautic -e MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle "$image"
   - sleep 300
   - docker logs "$name"
   - docker ps | grep "$name"

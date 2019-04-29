@@ -23,10 +23,8 @@ script:
   - docker-compose ps "mauticdb" | grep "Up"
   - docker-compose ps "mautic" | grep "Up"
   - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
-
-after_script:
   - ls /srv/mautic/html/plugins
-  - ls /srv/mautic/html/plugins/MauticLdapauthBundle
+  - [ -d /srv/mautic/html/plugins/MauticLdapauthBundle ]
 
 notifications:
   email: false

@@ -1,6 +1,12 @@
 #!/bin/bash
 set -eo pipefail
 
+declare -A compose=(
+	[apache]='apache'
+	[fpm]='fpm'
+	[alpine]='fpm'
+)
+
 declare -A base=(
 	[apache]='debian'
 	[fpm]='debian'
@@ -65,6 +71,8 @@ for latest in "${latests[@]}"; do
 				cp "$name" "$dir/$name"
 				chmod 755 "$dir/$name"
 			done
+
+			cp "docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.yml"
 
 			travisEnv='\n    - VERSION='"$version"' VARIANT='"$variant$travisEnv"
 

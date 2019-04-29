@@ -16,17 +16,17 @@ before_script:
   - dir="images/${VERSION}${VARIANT:+-$VARIANT}"
 
 script:
-  - travis_retry docker build -t "$image" "$dir"
+  - cd "$dir"
+  - docker-compose build
   - docker images
-  - docker run --name "$namedb" -d -p 3306:3306 -v /srv/mautic/db:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=mypassword -e MYSQL_DATABASE=mautic mariadb:10.3 --character_set_client=utf8 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --character-set-client-handshake=FALSE
-  - docker run --name "$name" -d -p 8080:80 -v /srv/mautic/html:/var/www/html -e MAUTIC_DB_HOST=mauticdb -e MAUTIC_DB_USER=root -e MAUTIC_DB_PASSWORD=mypassword -e MAUTIC_DB_NAME=mautic -e MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle "$image"
-  - sleep 300
-  - docker logs "$name"
-  - docker ps | grep "$name"
+  - travis_retry docker-compose up -d && sleep 300
+  - docker-compose ps
+  - docker-compose logs
+  - docker-compose ps "mauticdb" | grep "Up"
+  - docker-compose ps "mautic" | grep "Up"
+  - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
 
 after_script:
-  - docker ps
-  - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
   - ls /srv/mautic/html/plugins
   - ls /srv/mautic/html/plugins/MauticLdapauthBundle
 

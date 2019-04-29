@@ -10,7 +10,7 @@ services:
     links:
       - mauticdb
     ports:
-      - 8080:80
+      - 80:80
     volumes:
       - /srv/mautic/html:/var/www/html
     environment:

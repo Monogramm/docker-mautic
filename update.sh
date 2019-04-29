@@ -67,7 +67,7 @@ for latest in "${latests[@]}"; do
 			' "$dir/Dockerfile"
 
 			# Copy the init scripts
-			for name in makeconfig.php; do
+			for name in makeconfig.php .dockerignore; do
 				cp "$name" "$dir/$name"
 				chmod 755 "$dir/$name"
 			done

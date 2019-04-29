@@ -22,7 +22,7 @@ script:
   - docker run --name "$name" -d -p 8080:80 -e MAUTIC_DB_HOST=percona:3306 -e MAUTIC_DB_USER=root -e MAUTIC_DB_NAME=mautic -e MAUTIC_DB_PASSWORD=mypassword -e MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle -v /srv/mautic/html:/var/www/html "$image"
   - sleep 300
   - docker logs "$name"
-  - docker ps "$name"
+  - docker ps | grep "$name"
 
 after_script:
   - docker ps

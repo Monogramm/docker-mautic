@@ -16,12 +16,4 @@ RUN set -ex; \
 		ldap \
 	; \
     \
-    composer require monogramm/mautic-ldapauth-bundle \
-        --prefer-dist --prefer-stable --no-update \
-        --no-interaction --optimize-autoloader; \
-    composer install \
-        --prefer-dist --no-dev \
-        --no-interaction --optimize-autoloader; \
-    \
-    chown www-data:www-data plugins/* vendor/*; \
 	apk --purge del .build-deps

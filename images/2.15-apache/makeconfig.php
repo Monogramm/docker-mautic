@@ -129,6 +129,12 @@ if (array_key_exists('MAUTIC_LDAP_BASE_DN', $_ENV)) {
 if (array_key_exists('MAUTIC_LDAP_USER_QUERY', $_ENV)) {
     $parameters['ldap_auth_user_query'] = $_ENV['MAUTIC_LDAP_USER_QUERY'];
 }
+if (array_key_exists('MAUTIC_LDAP_ACTIVE_DIRECTORY', $_ENV)) {
+    $parameters['ldap_auth_isactivedirectory'] = (bool) $_ENV['MAUTIC_LDAP_ACTIVE_DIRECTORY'];
+}
+if (array_key_exists('MAUTIC_LDAP_ACTIVE_DIRECTORY_DOMAIN', $_ENV)) {
+    $parameters['ldap_auth_activedirectory_domain'] = $_ENV['MAUTIC_LDAP_ACTIVE_DIRECTORY_DOMAIN'];
+}
 if (array_key_exists('MAUTIC_LDAP_USER_ATTR', $_ENV)) {
     $parameters['ldap_auth_username_attribute'] = $_ENV['MAUTIC_LDAP_USER_ATTR'];
 }

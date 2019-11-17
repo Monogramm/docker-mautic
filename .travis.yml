@@ -22,7 +22,7 @@ script:
   - docker-compose logs
   - docker-compose ps "mauticdb" | grep "Up"
   - docker-compose ps "mautic" | grep "Up"
-  - grep "monogramm/mautic-ldapauth-bundle" /srv/mautic/html/composer.json
+  - grep "monogramm/mautic-ldap-auth-bundle" /srv/mautic/html/composer.json
   - ls /srv/mautic/html/plugins
 
 after_script:

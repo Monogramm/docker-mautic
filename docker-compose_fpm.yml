@@ -19,7 +19,7 @@ services:
       - MAUTIC_DB_PASSWORD=mauticdbpass
       - MAUTIC_RUN_CRON_JOBS=false
       - MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
-      - MAUTIC_PLUGINS=monogramm/mautic-ldapauth-bundle
+      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle
 
   mauticdb:
     image: mariadb:10.3

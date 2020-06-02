@@ -31,6 +31,15 @@ after_script:
 notifications:
   email: false
 
+  jobs:
+    allow_failures:
+      - env: VERSION=3.0 VARIANT=fpm
+      - env: VERSION=3.0 VARIANT=apache
+
 env: # Environments
     - VERSION=2.15 VARIANT=fpm
     - VERSION=2.15 VARIANT=apache
+    - VERSION=2.16 VARIANT=fpm
+    - VERSION=2.16 VARIANT=apache
+    - VERSION=3.0 VARIANT=fpm
+    - VERSION=3.0 VARIANT=apache

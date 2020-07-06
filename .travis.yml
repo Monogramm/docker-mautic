@@ -1,9 +1,9 @@
-dist: trusty
-sudo: required
+os: linux
+dist: bionic
 
 services: docker
 
-language: bash
+language: shell
 
 branches:
   only:

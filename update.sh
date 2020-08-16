@@ -18,7 +18,7 @@ variants=(
 	fpm
 )
 
-min_version='2.15'
+min_version='2.16'
 
 
 # version_greater_or_equal A B returns whether A >= B
@@ -30,49 +30,48 @@ dockerRepo="monogramm/docker-mautic"
 # Retrieve automatically the latest versions
 latests=( $( curl -fsSL 'https://api.github.com/repos/mautic/mautic/tags' |tac|tac| \
 	grep -oE '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' | \
-	sort -urV | \
-	head -n 1 )
+	sort -urV )
 )
 
 # Remove existing images
 echo "reset docker images"
-find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/[[:digit:]]\+\.[[:digit:]]\+' -exec rm -r '{}' \;
+#find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/[[:digit:]]\+\.[[:digit:]]\+' -exec rm -r '{}' \;
+rm -rf ./images/*
 
 echo "update docker images"
 travisEnv=
 for latest in "${latests[@]}"; do
 	version=$(echo "$latest" | cut -d. -f1-2)
 
-	if [ -d "$version" ]; then
-		continue
-	fi
-
 	# Only add versions >= "$min_version"
 	if version_greater_or_equal "$version" "$min_version"; then
 
 		for variant in "${variants[@]}"; do
-			echo "updating $latest [$version-$variant]"
-
 			# Create the version directory with a Dockerfile.
 			dir="images/$version-$variant"
+			if [ -d "$dir" ]; then
+				continue
+			fi
+
+			echo "updating $latest [$version-$variant]"
 			mkdir -p "$dir"
 
+			# Copy the init scripts
 			template="Dockerfile.${base[$variant]}.template"
-			cp "$template" "$dir/Dockerfile"
+			cp "template/$template" "$dir/Dockerfile"
+
+			for name in makeconfig.php .dockerignore; do
+				cp "template/$name" "$dir/$name"
+				chmod 755 "$dir/$name"
+			done
+
+			cp "template/docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.yml"
 
 			# Replace the variables.
 			sed -ri -e '
 				s/%%VARIANT%%/-'"$variant"'/g;
-				s/%%VERSION%%/'"$latest"'/g;
+				s/%%VERSION%%/'"$version"'/g;
 			' "$dir/Dockerfile"
-
-			# Copy the init scripts
-			for name in makeconfig.php .dockerignore; do
-				cp "$name" "$dir/$name"
-				chmod 755 "$dir/$name"
-			done
-
-			cp "docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.yml"
 
 			travisEnv='\n    - VERSION='"$version"' VARIANT='"$variant$travisEnv"
 

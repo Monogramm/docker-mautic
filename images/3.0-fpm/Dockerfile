@@ -1,4 +1,4 @@
-FROM monogramm/docker-mautic-base:3.0.0-fpm
+FROM monogramm/docker-mautic-base:3.0-fpm
 
 LABEL maintainer="Mathieu BRUNOT <mathieu.brunot at monogramm dot io>"
 

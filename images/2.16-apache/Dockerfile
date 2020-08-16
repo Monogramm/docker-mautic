@@ -1,4 +1,4 @@
-FROM monogramm/docker-mautic-base:2.16.2-apache
+FROM monogramm/docker-mautic-base:2.16-apache
 
 LABEL maintainer="Mathieu BRUNOT <mathieu.brunot at monogramm dot io>"
 

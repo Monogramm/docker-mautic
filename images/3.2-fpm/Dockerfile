@@ -1,4 +1,4 @@
-FROM monogramm/docker-mautic-base:%%VERSION%%%%VARIANT%%
+FROM monogramm/docker-mautic-base:3.2-fpm
 
 # Overwrite config init script
 COPY makeconfig.php /

@@ -19,6 +19,7 @@ variants=(
 )
 
 min_version='2.16'
+dockerLatest='3.2'
 
 
 # version_greater_or_equal A B returns whether A >= B
@@ -73,6 +74,23 @@ for latest in "${latests[@]}"; do
 				s/%%VERSION%%/'"$version"'/g;
 			' "$dir/Dockerfile"
 
+			# Create a list of "alias" tags for DockerHub post_push
+			if [ "$version" = "$dockerLatest" ]; then
+				if [ "$variant" = 'apache' ]; then
+					export DOCKER_TAGS="$latest-$variant $version-$variant $variant $latest $version latest "
+				else
+					export DOCKER_TAGS="$latest-$variant $version-$variant $variant "
+				fi
+			else
+				if [ "$variant" = 'apache' ]; then
+					export DOCKER_TAGS="$latest-$variant $version-$variant $latest $version "
+				else
+					export DOCKER_TAGS="$latest-$variant $version-$variant "
+				fi
+			fi
+			echo "${DOCKER_TAGS} " > "$dir/.dockertags"
+
+			# Add Travis-CI env var
 			travisEnv='\n    - VERSION='"$version"' VARIANT='"$variant$travisEnv"
 
 			if [[ $1 == 'build' ]]; then

@@ -13,6 +13,11 @@ declare -A base=(
 	[alpine]='alpine'
 )
 
+declare -A ldapauthversion=(
+	[3]='dev-mautic3'
+	[2]='1.1.1'
+)
+
 variants=(
 	apache
 	fpm
@@ -43,6 +48,7 @@ echo "update docker images"
 travisEnv=
 for latest in "${latests[@]}"; do
 	version=$(echo "$latest" | cut -d. -f1-2)
+	major=$(echo "$latest" | cut -d. -f1-1)
 
 	# Only add versions >= "$min_version"
 	if version_greater_or_equal "$version" "$min_version"; then
@@ -75,6 +81,10 @@ for latest in "${latests[@]}"; do
 				s/%%VARIANT%%/-'"$variant"'/g;
 				s/%%VERSION%%/'"$version"'/g;
 			' "$dir/Dockerfile"
+
+			sed -ri -e '
+				s|MAUTIC_PLUGINS=.*|MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:'"${ldapauthversion[$major]}"'|g;
+			' "$dir/docker-compose.test.yml"
 
 			sed -ri -e '
 				s|DOCKER_TAG=.*|DOCKER_TAG='"${version}-${variant}"'|g;

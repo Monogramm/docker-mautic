@@ -43,7 +43,7 @@ services:
       # Mautic Config
       - MAUTIC_RUN_CRON_JOBS=false
       - MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
-      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:dev-mautic3
+      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:1.1.1
       # DB Config
       - MAUTIC_DB_HOST=mautic-db
       - MAUTIC_DB_NAME=mautic

@@ -43,7 +43,7 @@ services:
       - mautic
     volumes:
       - /srv/mautic/nginx/logs:/var/logs/nginx
-      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - /srv/mautic/html:/var/www/html:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -73,7 +73,7 @@ services:
       # Mautic Config
       - MAUTIC_RUN_CRON_JOBS=false
       - MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
-      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:dev-mautic3
+      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle
       # DB Config
       - MAUTIC_DB_HOST=mautic-db
       - MAUTIC_DB_NAME=mautic

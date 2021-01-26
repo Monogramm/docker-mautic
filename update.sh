@@ -67,13 +67,19 @@ for latest in "${latests[@]}"; do
 			done
 
 			cp -r "template/hooks/" "$dir/"
-			cp "template/docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.yml"
+			cp -r "template/test/" "$dir/"
+			cp "template/docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.test.yml"
 
 			# Replace the variables.
 			sed -ri -e '
 				s/%%VARIANT%%/-'"$variant"'/g;
 				s/%%VERSION%%/'"$version"'/g;
 			' "$dir/Dockerfile"
+
+			sed -ri -e '
+				s|DOCKER_TAG=.*|DOCKER_TAG='"$version"'|g;
+				s|DOCKER_REPO=.*|DOCKER_REPO='"$dockerRepo"'|g;
+			' "$dir/hooks/run"
 
 			# Create a list of "alias" tags for DockerHub post_push
 			if [ "$version" = "$dockerLatest" ]; then

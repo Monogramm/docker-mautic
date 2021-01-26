@@ -66,6 +66,7 @@ for latest in "${latests[@]}"; do
 				chmod 755 "$dir/$name"
 			done
 
+			cp -r "template/hooks/" "$dir/"
 			cp "template/docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.yml"
 
 			# Replace the variables.

@@ -61,7 +61,7 @@ for latest in "${latests[@]}"; do
 			template="Dockerfile.${base[$variant]}.template"
 			cp "template/$template" "$dir/Dockerfile"
 
-			for name in makeconfig.php .dockerignore; do
+			for name in nginx.conf makeconfig.php .dockerignore; do
 				cp "template/$name" "$dir/$name"
 				chmod 755 "$dir/$name"
 			done
@@ -77,7 +77,7 @@ for latest in "${latests[@]}"; do
 			' "$dir/Dockerfile"
 
 			sed -ri -e '
-				s|DOCKER_TAG=.*|DOCKER_TAG='"$version"'|g;
+				s|DOCKER_TAG=.*|DOCKER_TAG='"${version}-${variant}"'|g;
 				s|DOCKER_REPO=.*|DOCKER_REPO='"$dockerRepo"'|g;
 			' "$dir/hooks/run"
 

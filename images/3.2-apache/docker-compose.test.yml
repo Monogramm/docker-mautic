@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     command: sh /docker_test.sh
     depends_on:
-      mautic-frontend:
+      mautic:
         condition: service_started
     environment:
       - DOCKER_TEST_CONTAINER=mautic
@@ -43,7 +43,7 @@ services:
       # Mautic Config
       - MAUTIC_RUN_CRON_JOBS=false
       - MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
-      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle
+      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:dev-mautic3
       # DB Config
       - MAUTIC_DB_HOST=mautic-db
       - MAUTIC_DB_NAME=mautic
@@ -104,8 +104,8 @@ services:
 
   mautic-rabbit:
     image: rabbitmq:3-alpine
-    hostname: mautic_rabbit
-    container_name: mautic_rabbit
+    hostname: mautic-rabbit
+    container_name: mautic-rabbit
     restart: always
     expose:
       - '5672'

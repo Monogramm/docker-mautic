@@ -16,6 +16,10 @@ RUN set -ex; \
 		ldap \
 	;
 
+ARG VERSION=unknown
+ARG VCS_REF=unknown
+ARG BUILD_DATE=unknown
+
 LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>" \
     version=$VERSION \
     org.label-schema.vcs-ref=$VCS_REF \

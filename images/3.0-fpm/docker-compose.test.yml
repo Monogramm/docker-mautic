@@ -8,13 +8,43 @@ services:
       dockerfile: Dockerfile
     command: sh /docker_test.sh
     depends_on:
-      mautic-frontend:
+      mautic:
+        condition: service_started
+      mautic-web:
         condition: service_started
     environment:
       - DOCKER_TEST_CONTAINER=mautic
     volumes_from:
       - mautic
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  mautic-web:
+    image: nginx:alpine
+    container_name: mautic-web
+    #restart: always
+    #healthcheck:
+    #  test: curl --fail http://localhost:80/health | grep -q -e 'UP' || exit 1
+    #  interval: 60s
+    #  timeout: 10s
+    #  #start_period: 5s
+    #  retries: 4
+    expose:
+      - '80'
+    #ports:
+    #  - "8080:80"
+    depends_on:
+      mautic:
+        condition: service_started
+    links:
+      - mautic
+    volumes_from:
+      - mautic
+    volumes:
+      - /srv/mautic/nginx/logs:/var/logs/nginx
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /srv/mautic/html:/var/www/html:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
 
@@ -43,7 +73,7 @@ services:
       # Mautic Config
       - MAUTIC_RUN_CRON_JOBS=false
       - MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
-      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle
+      - MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:dev-mautic3
       # DB Config
       - MAUTIC_DB_HOST=mautic-db
       - MAUTIC_DB_NAME=mautic
@@ -104,8 +134,8 @@ services:
 
   mautic-rabbit:
     image: rabbitmq:3-alpine
-    hostname: mautic_rabbit
-    container_name: mautic_rabbit
+    hostname: mautic-rabbit
+    container_name: mautic-rabbit
     restart: always
     expose:
       - '5672'

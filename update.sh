@@ -15,7 +15,7 @@ declare -A base=(
 
 declare -A ldapauthversion=(
 	[3]='dev-mautic3'
-	[2]='1.1.1'
+	[2]='dev-mautic2'
 )
 
 variants=(

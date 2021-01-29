@@ -2,3 +2,8 @@
 
 # See documentation for details:
 # https://docs.docker.com/docker-hub/builds/advanced/
+
+echo 'Prepare local volume directory...'
+#mkdir -p /srv/mautic/html
+#chmod 1000:1000 /srv/mautic/html
+#chmod 777 /srv/mautic/html

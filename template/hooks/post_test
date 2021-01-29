@@ -2,3 +2,6 @@
 
 # See documentation for details:
 # https://docs.docker.com/docker-hub/builds/advanced/
+
+echo 'Delete local volume directory...'
+#rm -rf /srv/mautic/html

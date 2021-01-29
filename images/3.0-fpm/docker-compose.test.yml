@@ -1,0 +1,183 @@
+version: "2.3"
+
+volumes:
+  data:
+  db:
+  nginx_logs:
+
+services:
+  # https://docs.docker.com/docker-hub/builds/automated-testing/
+  sut:
+    build:
+      context: ./test
+      dockerfile: Dockerfile
+    command: sh /docker_test.sh
+    depends_on:
+      mautic:
+        condition: service_started
+      mautic-web:
+        condition: service_started
+    environment:
+      - DOCKER_TEST_CONTAINER=mautic
+    volumes_from:
+      - mautic
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  mautic-web:
+    image: nginx:alpine
+    container_name: mautic-web
+    #restart: always
+    #healthcheck:
+    #  test: curl --fail http://localhost:80/health | grep -q -e 'UP' || exit 1
+    #  interval: 60s
+    #  timeout: 10s
+    #  #start_period: 5s
+    #  retries: 4
+    expose:
+      - '80'
+    #ports:
+    #  - "8080:80"
+    depends_on:
+      mautic:
+        condition: service_started
+    links:
+      - mautic
+    volumes_from:
+      - mautic
+    volumes:
+      - nginx_logs:/var/logs/nginx
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - data:/var/www/html:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  mautic:
+    build:
+      context: ./
+      dockerfile: ${DOCKERFILE_PATH}
+    image: ${IMAGE_NAME}
+    container_name: mautic
+    depends_on:
+      mautic-db:
+        condition: service_healthy
+      mautic-mailer:
+        condition: service_started
+      mautic-ldap:
+        condition: service_started
+    expose:
+      - '9000'
+    #ports:
+    #  - "9000:9000"
+    volumes:
+      - data:/var/www/html
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      # Mautic Config
+      - MAUTIC_RUN_CRON_JOBS=false
+      #- MAUTIC_TRUSTED_PROXIES=0.0.0.0/0
+      #- MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:dev-mautic3
+      # DB Config
+      - MAUTIC_DB_HOST=mautic-db
+      - MAUTIC_DB_NAME=mautic
+      - MAUTIC_DB_USER=mautic
+      - MAUTIC_DB_PASSWORD=mautic-dbpass
+      # SMTP Config
+      - MAUTIC_MAILER_TRANSPORT=smtp
+      - MAUTIC_MAILER_HOST=mautic-mailer
+      - MAUTIC_MAILER_PORT=1025
+      - MAUTIC_MAILER_USER=
+      - MAUTIC_MAILER_PASSWORD=
+      - MAUTIC_MAILER_ENCRYPTION=
+      - MAUTIC_MAILER_AUTH_MODE=plain
+      # Queue Config
+      - MAUTIC_QUEUE_PROTOCOL=rabbit
+      - MAUTIC_RABBITMQ_HOST=mautic-rabbit
+      - MAUTIC_RABBITMQ_PORT=5672
+      - MAUTIC_RABBITMQ_USER=mautic
+      - MAUTIC_RABBITMQ_PASSWORD=mautic-rabbit
+      # LDAP Config
+      - MAUTIC_LDAP_HOST=mautic-ldap
+      - MAUTIC_LDAP_PORT=10389
+      - MAUTIC_LDAP_VERSION=3
+      - MAUTIC_LDAP_SSL=0
+      - MAUTIC_LDAP_STARTTLS=0
+      - MAUTIC_LDAP_BASE_DN=ou=people,dc=planetexpress,dc=com
+      - MAUTIC_LDAP_USER_QUERY=(objectclass=inetOrgPerson)
+      - MAUTIC_LDAP_USER_ATTR=uid
+      - MAUTIC_LDAP_EMAIL_ATTR=mail
+      - MAUTIC_LDAP_FIRSTNAME_ATTR=givenname
+      - MAUTIC_LDAP_LASTNAME_ATTR=sn
+      - MAUTIC_LDAP_FULLNAME_ATTR=displayname
+      # WIP Not yet available
+      #- MAUTIC_LDAP_BIND_DN=cn=admin,dc=planetexpress,dc=com
+      #- MAUTIC_LDAP_BIND_PASSWORD=GoodNewsEveryone
+
+  mautic-db:
+    image: mariadb:10
+    container_name: mautic-db
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "--user=root", "--password=mysqlrootpassword"]
+      timeout: 10s
+      retries: 5
+    expose:
+      - '3306'
+    #ports:
+    #  - "3306:3306"
+    volumes:
+      - /srv/mautic/db:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysqlrootpassword
+      - MYSQL_DATABASE=mautic
+      - MYSQL_USER=mautic
+      - MYSQL_PASSWORD=mautic-dbpass
+
+  mautic-rabbit:
+    image: rabbitmq:3-alpine
+    hostname: mautic-rabbit
+    container_name: mautic-rabbit
+    restart: always
+    expose:
+      - '5672'
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      timeout: 5s
+      retries: 1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - RABBITMQ_DEFAULT_USER=mautic
+      - RABBITMQ_DEFAULT_PASS=mautic-rabbit
+
+  mautic-mailer:
+    image: sj26/mailcatcher:latest
+    hostname: mautic-mailer
+    container_name: mautic-mailer
+    restart: always
+    expose:
+      - '1025'
+    ports:
+      - "1080:1080"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  mautic-ldap:
+    image: rroemhild/test-openldap:2.1
+    container_name: mautic-ldap
+    hostname: mautic-ldap
+    expose:
+      - '10389'
+      - '10636'
+    ports:
+      - "10389:10389"
+      - "10636:10636"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro

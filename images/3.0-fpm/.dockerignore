@@ -1,2 +1,4 @@
 # Ignore CI docker-compose
 docker-compose.yml
+.dockertags
+nginx.conf

@@ -13,12 +13,18 @@ declare -A base=(
 	[alpine]='alpine'
 )
 
+declare -A ldapauthversion=(
+	[3]='dev-mautic3'
+	[2]='dev-mautic2'
+)
+
 variants=(
 	apache
 	fpm
 )
 
-min_version='2.15'
+min_version='2.16'
+dockerLatest='3.2'
 
 
 # version_greater_or_equal A B returns whether A >= B
@@ -30,50 +36,78 @@ dockerRepo="monogramm/docker-mautic"
 # Retrieve automatically the latest versions
 latests=( $( curl -fsSL 'https://api.github.com/repos/mautic/mautic/tags' |tac|tac| \
 	grep -oE '[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+' | \
-	sort -urV | \
-	head -n 1 )
+	sort -urV )
 )
 
 # Remove existing images
 echo "reset docker images"
-find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/[[:digit:]]\+\.[[:digit:]]\+' -exec rm -r '{}' \;
+#find ./images -maxdepth 1 -type d -regextype sed -regex '\./images/[[:digit:]]\+\.[[:digit:]]\+' -exec rm -r '{}' \;
+rm -rf ./images/*
 
 echo "update docker images"
 travisEnv=
 for latest in "${latests[@]}"; do
 	version=$(echo "$latest" | cut -d. -f1-2)
-
-	if [ -d "$version" ]; then
-		continue
-	fi
+	major=$(echo "$latest" | cut -d. -f1-1)
 
 	# Only add versions >= "$min_version"
 	if version_greater_or_equal "$version" "$min_version"; then
 
 		for variant in "${variants[@]}"; do
-			echo "updating $latest [$version-$variant]"
-
 			# Create the version directory with a Dockerfile.
 			dir="images/$version-$variant"
+			if [ -d "$dir" ]; then
+				continue
+			fi
+
+			echo "updating $latest [$version-$variant]"
 			mkdir -p "$dir"
 
+			# Copy the init scripts
 			template="Dockerfile.${base[$variant]}.template"
-			cp "$template" "$dir/Dockerfile"
+			cp "template/$template" "$dir/Dockerfile"
+
+			for name in nginx.conf makeconfig.php .dockerignore; do
+				cp "template/$name" "$dir/$name"
+				chmod 755 "$dir/$name"
+			done
+
+			cp -r "template/hooks/" "$dir/"
+			cp -r "template/test/" "$dir/"
+			cp "template/docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.test.yml"
 
 			# Replace the variables.
 			sed -ri -e '
 				s/%%VARIANT%%/-'"$variant"'/g;
-				s/%%VERSION%%/'"$latest"'/g;
+				s/%%VERSION%%/'"$version"'/g;
 			' "$dir/Dockerfile"
 
-			# Copy the init scripts
-			for name in makeconfig.php .dockerignore; do
-				cp "$name" "$dir/$name"
-				chmod 755 "$dir/$name"
-			done
+			sed -ri -e '
+				s|MAUTIC_PLUGINS=.*|MAUTIC_PLUGINS=monogramm/mautic-ldap-auth-bundle:'"${ldapauthversion[$major]}"'|g;
+			' "$dir/docker-compose.test.yml"
 
-			cp "docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.yml"
+			sed -ri -e '
+				s|DOCKER_TAG=.*|DOCKER_TAG='"${version}-${variant}"'|g;
+				s|DOCKER_REPO=.*|DOCKER_REPO='"$dockerRepo"'|g;
+			' "$dir/hooks/run"
 
+			# Create a list of "alias" tags for DockerHub post_push
+			if [ "$version" = "$dockerLatest" ]; then
+				if [ "$variant" = 'apache' ]; then
+					export DOCKER_TAGS="$latest-$variant $version-$variant $variant $latest $version latest "
+				else
+					export DOCKER_TAGS="$latest-$variant $version-$variant $variant "
+				fi
+			else
+				if [ "$variant" = 'apache' ]; then
+					export DOCKER_TAGS="$latest-$variant $version-$variant $latest $version "
+				else
+					export DOCKER_TAGS="$latest-$variant $version-$variant "
+				fi
+			fi
+			echo "${DOCKER_TAGS} " > "$dir/.dockertags"
+
+			# Add Travis-CI env var
 			travisEnv='\n    - VERSION='"$version"' VARIANT='"$variant$travisEnv"
 
 			if [[ $1 == 'build' ]]; then

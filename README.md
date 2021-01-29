@@ -33,6 +33,7 @@ Mautic is an Open Source Marketing Automation solution.
 See Mautic base image documentation for details.
 
 > [Mautic GitHub](https://github.com/Monogramm/docker-mautic-base)
+
 > [Mautic DockerHub](https://hub.docker.com/r/monogramm/docker-mautic-base/)
 
 ## Questions / Issues

@@ -1,11 +1,9 @@
-FROM monogramm/docker-mautic-base:3.0.0-fpm
-
-LABEL maintainer="Mathieu BRUNOT <mathieu.brunot at monogramm dot io>"
+FROM monogramm/docker-mautic-base:3.0-fpm
 
 # Overwrite config init script
 COPY makeconfig.php /
 
-# Add requirements for common extenions
+# Add requirements for common extensions
 RUN set -ex; \
     apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -17,3 +15,19 @@ RUN set -ex; \
 	docker-php-ext-install \
 		ldap \
 	;
+
+ARG VERSION=unknown
+ARG VCS_REF=unknown
+ARG BUILD_DATE=unknown
+
+LABEL maintainer="Monogramm Maintainers <opensource at monogramm dot io>" \
+    version=$VERSION \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.vcs-url="https://github.com/Monogramm/docker-mautic" \
+    org.label-schema.build-date=$BUILD_DATE \
+    org.label-schema.name="Mautic" \
+    org.label-schema.description="Open Source Marketing Automation solution" \
+    org.label-schema.url="https://www.mautic.org/" \
+    org.label-schema.vendor="Acquia" \
+    org.label-schema.version=$VERSION \
+    org.label-schema.schema-version="1.0"

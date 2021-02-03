@@ -75,6 +75,8 @@ for latest in "${latests[@]}"; do
 			cp -r "template/hooks/" "$dir/"
 			cp -r "template/test/" "$dir/"
 			cp "template/docker-compose_${compose[$variant]}.yml" "$dir/docker-compose.test.yml"
+			cp "template/mautic${major}.crontab" "$dir/mautic.crontab"
+			cp "template/entrypoint${major}.sh" "$dir/entrypoint.sh"
 
 			# Replace the variables.
 			sed -ri -e '

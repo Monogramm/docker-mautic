@@ -1,7 +1,8 @@
 FROM monogramm/docker-mautic-base:%%VERSION%%%%VARIANT%%
 
 # Overwrite config init script
-COPY makeconfig.php /
+COPY entrypoint.sh makeconfig.php /
+COPY mautic.crontab /etc/cron.d/mautic
 
 # Add requirements for common extensions (untested so far)
 RUN set -ex; \

@@ -22,7 +22,7 @@ jobs:
       - name: Execute CI hooks
         id: docker_build
         run: |
-          cd ./images/${{ matrix.version }}/${{ matrix.variant }}/
+          cd ./images/${{ matrix.version }}-${{ matrix.variant }}/
           ./hooks/run
 
       - name: Display docker images

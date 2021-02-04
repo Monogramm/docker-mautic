@@ -85,13 +85,13 @@ services:
       - MAUTIC_DB_USER=mautic
       - MAUTIC_DB_PASSWORD=mautic-dbpass
       # SMTP Config
-      - MAUTIC_MAILER_TRANSPORT=smtp
-      - MAUTIC_MAILER_HOST=mautic-mailer
-      - MAUTIC_MAILER_PORT=1025
-      - MAUTIC_MAILER_USER=
-      - MAUTIC_MAILER_PASSWORD=
-      - MAUTIC_MAILER_ENCRYPTION=
-      - MAUTIC_MAILER_AUTH_MODE=plain
+      #- MAUTIC_MAILER_TRANSPORT=smtp
+      #- MAUTIC_MAILER_HOST=mautic-mailer
+      #- MAUTIC_MAILER_PORT=1025
+      #- MAUTIC_MAILER_USER=
+      #- MAUTIC_MAILER_PASSWORD=
+      #- MAUTIC_MAILER_ENCRYPTION=
+      #- MAUTIC_MAILER_AUTH_MODE=plain
       # Queue Config
       - MAUTIC_QUEUE_PROTOCOL=rabbit
       - MAUTIC_RABBITMQ_HOST=mautic-rabbit
